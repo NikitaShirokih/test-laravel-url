@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RedirectShortLinkController;
 use App\Http\Controllers\ShortLinkController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,3 +23,6 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('/{code}', RedirectShortLinkController::class)
+    ->name('short-links.redirect');
