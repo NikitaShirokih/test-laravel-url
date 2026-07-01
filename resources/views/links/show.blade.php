@@ -39,9 +39,54 @@
                             <dt class="text-sm font-medium text-gray-500">Дата создания</dt>
                             <dd class="mt-1 text-sm text-gray-900">{{ $shortLink->created_at?->format('d.m.Y H:i') }}</dd>
                         </div>
-                    </dl>
 
-                    <div class="flex items-center justify-between border-t border-gray-200 pt-6">
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Всего переходов</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ $visitsCount }}</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                <div class="space-y-6 p-6 text-gray-900">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900">Статистика переходов</h3>
+                        <p class="mt-1 text-sm text-gray-600">Всего переходов: {{ $visitsCount }}</p>
+                    </div>
+
+                    @if ($visits->isEmpty())
+                        <p class="text-sm text-gray-600">Переходов пока нет.</p>
+                    @else
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead>
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">IP-адрес</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Дата и время</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    @foreach ($visits as $visit)
+                                        <tr>
+                                            <td class="px-4 py-4 text-sm text-gray-900">{{ $visit->ip_address }}</td>
+                                            <td class="px-4 py-4 text-sm text-gray-600">{{ $visit->created_at?->format('d.m.Y H:i') }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div>
+                            {{ $visits->links() }}
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    <div class="flex items-center justify-between">
                         <a href="{{ route('links.index') }}" class="text-sm text-gray-600 underline hover:text-gray-900">
                             Назад к списку
                         </a>

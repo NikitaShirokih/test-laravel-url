@@ -30,6 +30,7 @@
                                     <tr>
                                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Оригинальный URL</th>
                                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Короткий URL</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Клики</th>
                                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Создана</th>
                                         <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">Действия</th>
                                     </tr>
@@ -44,6 +45,9 @@
                                                 <a href="{{ $shortLink->shortUrl() }}" class="text-indigo-600 hover:text-indigo-900">
                                                     {{ $shortLink->shortUrl() }}
                                                 </a>
+                                            </td>
+                                            <td class="px-4 py-4 text-sm text-gray-900">
+                                                {{ $shortLink->visits_count }}
                                             </td>
                                             <td class="px-4 py-4 text-sm text-gray-600">
                                                 {{ $shortLink->created_at?->format('d.m.Y H:i') }}
