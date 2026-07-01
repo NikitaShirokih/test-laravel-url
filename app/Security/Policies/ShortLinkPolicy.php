@@ -16,7 +16,7 @@ final class ShortLinkPolicy
 
     public function view(User $user, ShortLink $shortLink): bool
     {
-        return $this->isOwner($user, $shortLink);
+        return $this->belongsToUser($user, $shortLink);
     }
 
     public function create(User $user): bool
@@ -26,10 +26,10 @@ final class ShortLinkPolicy
 
     public function delete(User $user, ShortLink $shortLink): bool
     {
-        return $this->isOwner($user, $shortLink);
+        return $this->belongsToUser($user, $shortLink);
     }
 
-    private function isOwner(User $user, ShortLink $shortLink): bool
+    private function belongsToUser(User $user, ShortLink $shortLink): bool
     {
         return $shortLink->user_id === $user->id;
     }

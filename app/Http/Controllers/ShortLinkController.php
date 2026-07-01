@@ -9,34 +9,23 @@ use App\Models\ShortLink;
 use App\Models\User;
 use App\Services\ShortLinkService;
 use Illuminate\Contracts\View\View;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 final class ShortLinkController extends Controller
 {
-    use AuthorizesRequests;
-
-    public function index(Request $request): View
+    public function index(Request $request, ShortLinkService $shortLinkService): View
     {
-        $this->authorize('viewAny', ShortLink::class);
-
         /** @var User $user */
         $user = $request->user();
 
-        $shortLinks = $user->shortLinks()
-            ->latest()
-            ->paginate(10);
-
         return view('links.index', [
-            'shortLinks' => $shortLinks,
+            'shortLinks' => $shortLinkService->paginateForUser($user),
         ]);
     }
 
     public function create(): View
     {
-        $this->authorize('create', ShortLink::class);
-
         return view('links.create');
     }
 
@@ -44,8 +33,6 @@ final class ShortLinkController extends Controller
         StoreShortLinkRequest $request,
         ShortLinkService $shortLinkService,
     ): RedirectResponse {
-        $this->authorize('create', ShortLink::class);
-
         /** @var User $user */
         $user = $request->user();
 
@@ -59,20 +46,18 @@ final class ShortLinkController extends Controller
             ->with('status', 'Короткая ссылка создана.');
     }
 
-    public function show(ShortLink $link): View
+    public function show(ShortLink $link, ShortLinkService $shortLinkService): View
     {
-        $this->authorize('view', $link);
-
         return view('links.show', [
             'shortLink' => $link,
+            'visits' => $shortLinkService->paginateVisits($link),
+            'visitsCount' => $shortLinkService->countVisits($link),
         ]);
     }
 
-    public function destroy(ShortLink $link): RedirectResponse
+    public function destroy(ShortLink $link, ShortLinkService $shortLinkService): RedirectResponse
     {
-        $this->authorize('delete', $link);
-
-        $link->delete();
+        $shortLinkService->delete($link);
 
         return redirect()
             ->route('links.index')
