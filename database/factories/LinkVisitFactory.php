@@ -25,4 +25,11 @@ final class LinkVisitFactory extends Factory
             'ip_address' => fake()->ipv4(),
         ];
     }
+
+    public function forShortLink(ShortLink $shortLink): self
+    {
+        return $this->state([
+            'short_link_id' => $shortLink->id,
+        ]);
+    }
 }

@@ -8,7 +8,7 @@ use App\Services\ShortLinkRedirectService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-final class RedirectShortLinkController extends Controller
+final class ShortCodeRedirectController extends Controller
 {
     public function __invoke(
         Request $request,

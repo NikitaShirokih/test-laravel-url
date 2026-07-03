@@ -29,10 +29,12 @@ final class ShortLinkResource extends Resource
 
     protected static ?string $navigationLabel = 'Короткие ссылки';
 
+    protected static ?string $navigationGroup = 'Ссылки';
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('user_id', auth()->id())
+            ->where('user_id', request()->user()?->getAuthIdentifier())
             ->withCount('visits');
     }
 
@@ -43,10 +45,13 @@ final class ShortLinkResource extends Resource
                 Forms\Components\TextInput::make('original_url')
                     ->label('Оригинальный URL')
                     ->placeholder('https://example.com/page')
+                    ->helperText('Введите полный адрес страницы, начиная с http:// или https://')
                     ->required()
                     ->url()
                     ->maxLength(2048)
-                    ->rules([new HttpUrlRule]),
+                    ->rules([new HttpUrlRule])
+                    ->autofocus()
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -62,23 +67,33 @@ final class ShortLinkResource extends Resource
                     ->limit(50)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('short_url')
-                    ->label('Короткий URL')
-                    ->state(fn (ShortLink $record): string => $record->shortUrl()),
+                    ->label('Короткая ссылка')
+                    ->state(fn (ShortLink $record): string => $record->shortUrl())
+                    ->copyable()
+                    ->copyMessage('Короткая ссылка скопирована'),
                 Tables\Columns\TextColumn::make('short_code')
-                    ->label('Короткий код')
+                    ->label('Код')
+                    ->copyable()
+                    ->copyMessage('Код скопирован')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('visits_count')
                     ->label('Клики')
+                    ->badge()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Дата создания')
+                    ->label('Создана')
                     ->dateTime('d.m.Y H:i')
                     ->sortable(),
             ])
             ->defaultSort('created_at', 'desc')
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->label('Открыть'),
+                Tables\Actions\DeleteAction::make()
+                    ->label('Удалить')
+                    ->modalHeading('Удалить короткую ссылку?')
+                    ->modalDescription('После удаления короткая ссылка перестанет работать.')
+                    ->modalSubmitActionLabel('Удалить'),
             ])
             ->bulkActions([]);
     }
@@ -90,15 +105,17 @@ final class ShortLinkResource extends Resource
                 Infolists\Components\TextEntry::make('original_url')
                     ->label('Оригинальный URL'),
                 Infolists\Components\TextEntry::make('short_url')
-                    ->label('Короткий URL')
-                    ->state(fn (ShortLink $record): string => $record->shortUrl()),
+                    ->label('Короткая ссылка')
+                    ->state(fn (ShortLink $record): string => $record->shortUrl())
+                    ->copyable(),
                 Infolists\Components\TextEntry::make('short_code')
-                    ->label('Короткий код'),
-                Infolists\Components\TextEntry::make('visits_total')
-                    ->label('Всего переходов')
-                    ->state(fn (ShortLink $record): int => $record->visits()->count()),
+                    ->label('Код')
+                    ->copyable(),
+                Infolists\Components\TextEntry::make('visits_count')
+                    ->label('Клики')
+                    ->state(fn (ShortLink $record): int => (int) ($record->visits_count ?? $record->visits()->count())),
                 Infolists\Components\TextEntry::make('created_at')
-                    ->label('Дата создания')
+                    ->label('Создана')
                     ->dateTime('d.m.Y H:i'),
             ]);
     }

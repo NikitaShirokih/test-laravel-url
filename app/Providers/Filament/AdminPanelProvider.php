@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers\Filament;
 
+use App\Filament\Resources\ShortLinkResource;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -24,9 +28,13 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
-            ->id('admin')
-            ->path('admin')
+            ->id('cabinet')
+            ->path('cabinet')
             ->login()
+            ->registration()
+            ->passwordReset()
+            ->profile()
+            ->authGuard('web')
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -35,10 +43,15 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
+            ->navigationItems([
+                NavigationItem::make('Создать ссылку')
+                    ->url(fn (): string => ShortLinkResource::getUrl('create'))
+                    ->icon('heroicon-o-plus-circle')
+                    ->sort(1),
+            ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

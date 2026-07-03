@@ -20,7 +20,7 @@ final class CreateShortLink extends CreateRecord
     protected function handleRecordCreation(array $data): ShortLink
     {
         /** @var User $user */
-        $user = auth()->user();
+        $user = request()->user();
 
         return app(ShortLinkService::class)->create(
             $user,

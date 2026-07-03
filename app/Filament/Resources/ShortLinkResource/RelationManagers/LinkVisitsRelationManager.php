@@ -15,6 +15,10 @@ final class LinkVisitsRelationManager extends RelationManager
 
     protected static ?string $title = 'Переходы';
 
+    protected static ?string $modelLabel = 'Переход';
+
+    protected static ?string $pluralModelLabel = 'Переходы';
+
     public function form(Form $form): Form
     {
         return $form;
@@ -28,7 +32,7 @@ final class LinkVisitsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('ip_address')
                     ->label('IP-адрес'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Дата и время перехода')
+                    ->label('Дата перехода')
                     ->dateTime('d.m.Y H:i')
                     ->sortable(),
             ])

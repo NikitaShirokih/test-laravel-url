@@ -27,4 +27,18 @@ final class ShortLinkFactory extends Factory
             'short_code' => Str::random(6),
         ];
     }
+
+    public function forUser(User $user): self
+    {
+        return $this->state([
+            'user_id' => $user->id,
+        ]);
+    }
+
+    public function deleted(): self
+    {
+        return $this->state([
+            'deleted_at' => now(),
+        ]);
+    }
 }
